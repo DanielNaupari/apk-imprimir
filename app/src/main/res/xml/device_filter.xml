@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Impresora exacta del quiosco (valores en DECIMAL):
+  IP1000 Printer USB001 — VID 0x0519 / PID 0x2013.
+
+  No usar filtros por clase: class="255" también atrapa el adaptador de red USB
+  (Realtek 0BDA:8153) y el sistema pregunta por él al arrancar.
+-->
+<resources>
+    <usb-device vendor-id="1305" product-id="8211" />
+</resources>

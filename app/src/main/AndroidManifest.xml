@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-feature android:name="android.hardware.usb.host" android:required="true" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <application
+        android:allowBackup="false"
+        android:label="@string/app_name"
+        android:theme="@android:style/Theme.Material.Light.NoActionBar">
+
+        <!--
+          singleTask: cuando el sistema abre la app al detectar la impresora,
+          reusa la instancia abierta (llega por onNewIntent) en vez de crear otra.
+
+          directBootAware: al prender, el sistema detecta la impresora ANTES de
+          desbloquear el usuario. En ese momento solo ve las actividades
+          directBootAware; si la nuestra no lo es, no la encuentra, no aplica
+          «Always open» y no entrega el permiso. Por eso la app solo usa
+          almacenamiento protegido por dispositivo (ver Store).
+        -->
+        <activity
+            android:name=".MainActivity"
+            android:directBootAware="true"
+            android:exported="true"
+            android:launchMode="singleTask">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!--
+              La clave para que «Always open» sobreviva al reinicio: la app declara que
+              maneja la conexión de la impresora. Con esto, al arrancar, el sistema
+              abre la app y le entrega el permiso USB sin preguntar.
+            -->
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/device_filter" />
+        </activity>
+
+        <!-- Solo diagnóstico: anota si la impresora ya tiene permiso al arrancar. -->
+        <receiver
+            android:name=".BootReceiver"
+            android:directBootAware="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>
